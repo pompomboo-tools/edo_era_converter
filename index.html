@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="./favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180">
+<title>江戸時代 西暦⇔元号 変換</title>
+<style>
+:root{--blue:#007aff;--blue2:#0062cc;--bg:#f2f2f7;--card:#fff;--text:#1c1c1e;--sub:#636366;--sep:#d1d1d6;--fill:rgba(118,118,128,.12);--red:#ff3b30;--radius:16px;--cr:11px;--shadow:0 6px 20px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04)}
+*{box-sizing:border-box}html{background:var(--bg);-webkit-text-size-adjust:100%}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif;background:var(--bg);color:var(--text);margin:0 auto;width:100%;max-width:700px;min-height:100vh;padding:max(22px,env(safe-area-inset-top)) 20px max(28px,env(safe-area-inset-bottom));overflow-x:hidden;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 16px;padding:5px;background:var(--fill);border-radius:14px}.tab-btn{min-width:0;min-height:42px;padding:8px 6px;cursor:pointer;border:0;background:transparent;border-radius:10px;font:inherit;font-size:14px;font-weight:600;color:var(--sub);white-space:nowrap;transition:transform .08s ease,background-color .15s ease,color .15s ease,box-shadow .15s ease}.tab-btn.active{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.panel,.tab-panel{background:var(--card);padding:22px;border-radius:var(--radius);box-shadow:var(--shadow)}.tab-panel{display:none}.tab-panel.active{display:block}label{display:block;font-weight:600;color:var(--sub);margin-bottom:7px;font-size:14px}input[type="number"],select{width:100%;min-width:0;height:46px;padding:0 13px;border:1px solid var(--sep);border-radius:var(--cr);font:inherit;font-size:16px;color:var(--text);background:#fff;outline:none;transition:border-color .15s ease,box-shadow .15s ease}input[type="number"]:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,122,255,.14)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}.input-group{margin-bottom:15px}
+.action-row{display:grid;grid-template-columns:1fr 3fr;gap:10px;align-items:stretch;margin-top:8px}.clear-btn{min-height:50px;padding:11px 10px;background:transparent;color:var(--sub);border:1px solid var(--sep);border-radius:13px;cursor:pointer;font:inherit;font-size:15px;font-weight:500;transition:transform .08s ease,background-color .15s ease,border-color .15s ease,color .15s ease}button.action{min-height:50px;padding:11px 18px;background:var(--blue);color:#fff;border:0;border-radius:13px;cursor:pointer;font:inherit;font-size:16px;font-weight:700;width:100%;transition:transform .08s ease,background-color .15s ease}
+.result{margin-top:16px;padding:16px;border-radius:14px;text-align:center;font-size:20px;font-weight:700;display:none;border:1px solid transparent}.result.show{display:block}.result.success{background:rgba(0,122,255,.08);color:var(--text);border-color:rgba(0,122,255,.18)}.result.error{background:rgba(255,59,48,.07);color:#c62921;border-color:rgba(255,59,48,.18);font-size:16px}
+.era-table{margin-top:16px!important}.era-table h3{text-align:left;color:var(--text);margin:0;font-size:15px}.era-table-header{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;user-select:none;min-height:42px}.toggle-arrow{color:var(--blue);font-size:12px;transition:transform .15s ease}.toggle-arrow.open{transform:rotate(180deg)}.table-wrap{max-height:0;overflow:hidden;transition:max-height .35s ease}.table-wrap.open{max-height:1200px}.table-scroll{max-height:500px;overflow:auto;border:1px solid #e5e5ea;border-radius:12px}.table-scroll::-webkit-scrollbar{width:8px}.table-scroll::-webkit-scrollbar-thumb{background:#c7c7cc;border-radius:4px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 7px;text-align:center;border-bottom:1px solid #e5e5ea}th{background:#f2f2f7;color:var(--sub);font-weight:700;position:sticky;top:0;z-index:1}.era-table table tr:nth-child(even) td,tr.bg-even td{background:#f9f9fb}#hayami-table th:nth-child(1),#hayami-table td:nth-child(1),#hayami-table th:nth-child(2),#hayami-table td:nth-child(2){border-right:1px solid #e5e5ea}.shogun-info{padding:12px 14px;background:#f9f9fb;border-radius:12px;font-size:13px;color:var(--sub);line-height:1.6;text-align:center;border:1px solid #e5e5ea;margin-top:12px}
+#hayami-table tr.special-1716{height:120px}#hayami-table tr.special-1716>td{height:120px;padding:0;vertical-align:middle}#hayami-table .special-full,#hayami-table .special-era,#hayami-table .special-shogun{height:120px;box-sizing:border-box}#hayami-table .special-full{display:flex;align-items:center;justify-content:center}#hayami-table .special-era,#hayami-table .special-shogun{display:grid}#hayami-table .special-era{grid-template-rows:1fr 2fr}#hayami-table .special-shogun{grid-template-rows:2fr 1fr}#hayami-table .special-era>div,#hayami-table .special-shogun>div{display:flex;align-items:center;justify-content:center;box-sizing:border-box}#hayami-table .special-era>div:first-child,#hayami-table .special-shogun>div:first-child{border-bottom:1px solid #e5e5ea}
+button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible,.era-table-header:focus-visible{outline:3px solid rgba(0,122,255,.28);outline-offset:2px}button:active{transform:scale(.98)}
+
+/* インフォメーションボタン：PCは作業領域下の右下、スマホは作業領域上の右上 */
+.info-footer{display:flex;justify-content:flex-end;align-items:center;order:10;margin-top:12px}
+.info-button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--cr);background:#fff;color:var(--sub);border:1px solid var(--sep);padding:0;cursor:pointer;outline:none;font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:400;font-style:normal;line-height:1;-webkit-tap-highlight-color:transparent;transition:transform .08s ease,background-color .15s ease,border-color .15s ease,color .15s ease}
+.modal-overlay{position:fixed;inset:0;width:100vw;height:100vh;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;z-index:9999;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;padding:20px}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-content{position:relative;background:#fff;border-radius:20px;max-width:90vw;max-height:85vh;box-shadow:0 20px 40px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;transform:scale(.92);transition:transform .25s cubic-bezier(.175,.885,.32,1.275)}
+.modal-overlay.active .modal-content{transform:scale(1)}
+.modal-close-btn{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(118,118,128,.12);color:var(--sub);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;padding:0;transition:background .15s ease,transform .15s ease;-webkit-tap-highlight-color:transparent}
+.modal-close-btn:active{transform:scale(.9);background:rgba(118,118,128,.25)}
+.modal-close-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
+.modal-body{padding:16px;overflow-y:auto;display:flex;justify-content:center;align-items:center}
+.modal-body img{max-width:100%;height:auto;border-radius:12px;display:block}
+@media(hover:hover) and (pointer:fine){.tab-btn:hover{background:rgba(255,255,255,.72);color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.08)}.tab-btn.active:hover{background:#fff;box-shadow:0 2px 7px rgba(0,0,0,.14)}button.action:hover{background:var(--blue2)}.clear-btn:hover{background:rgba(118,118,128,.08);border-color:#c7c7cc;color:var(--text)}.era-table-header:hover h3{color:var(--blue)}.info-button:hover{background:rgba(118,118,128,.08);border-color:#c7c7cc;color:var(--text)}}
+@media(max-width:580px){body{padding:max(10px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}.info-footer{order:-1;margin-top:0;margin-bottom:8px}.tabs{gap:4px}.tab-btn{font-size:13px;padding:7px 3px}.panel,.tab-panel{padding:14px;border-radius:15px}.row{grid-template-columns:1fr 1fr;gap:8px}.action-row{grid-template-columns:1fr 3fr;gap:8px}.clear-btn,button.action{min-height:48px}.table-scroll{max-height:60vh}th,td{padding:9px 5px;font-size:13px}}
+@media(max-width:350px){.tab-btn{font-size:12px}.panel,.tab-panel{padding:11px}.action-row{gap:6px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+
+<!-- タブボタン -->
+<div class="tabs">
+  <button class="tab-btn" onclick="switchTab('panel-seireki', event)">西暦 → 元号</button>
+  <button class="tab-btn" onclick="switchTab('panel-gengo', event)">元号 → 西暦</button>
+  <button class="tab-btn active" onclick="switchTab('panel-hayami', event)">早見表</button>
+</div>
+
+<!-- タブ1：西暦 → 元号 -->
+<div id="panel-seireki" class="tab-panel">
+  <div class="input-group">
+    <label for="seireki-input">西暦（年）を入力</label>
+    <input type="number" id="seireki-input" placeholder="例: 1700" min="1596" max="1868">
+  </div>
+  <div class="action-row">
+    <button type="button" class="clear-btn" onclick="clearSettings()">クリア</button>
+    <button class="action" onclick="convertToGengo()">元号に変換する</button>
+  </div>
+  <div id="result-seireki" class="result"></div>
+</div>
+
+<!-- タブ2：元号 → 西暦 -->
+<div id="panel-gengo" class="tab-panel">
+  <div class="row">
+    <div>
+      <label for="gengo-select">元号を選択</label>
+      <select id="gengo-select"></select>
+    </div>
+    <div>
+      <label for="gengo-year-input">年を入力</label>
+      <input type="number" id="gengo-year-input" placeholder="例: 3" min="1">
+    </div>
+  </div>
+  <div class="action-row">
+    <button type="button" class="clear-btn" onclick="clearSettings()">クリア</button>
+    <button class="action" onclick="convertToSeireki()">西暦に変換する</button>
+  </div>
+  <div id="result-gengo" class="result"></div>
+</div>
+
+<!-- タブ3：早見表 -->
+<div id="panel-hayami" class="tab-panel active" style="padding: 20px;">
+  <div class="table-scroll">
+    <table id="hayami-table">
+      <thead>
+        <tr>
+          <th style="width: 33.333%;">西暦</th>
+          <th style="width: 33.333%;">元号</th>
+          <th style="width: 33.333%;">将軍</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- JSで自動生成されます -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- その他の情報パネル（元号一覧） -->
+<div class="panel era-table" style="margin-top: 20px;">
+  <div class="era-table-header" onclick="toggleTable()" tabindex="0" role="button" aria-label="江戸時代 元号一覧を開閉">
+    <h3>江戸時代 元号一覧（全36元号）</h3>
+    <span id="toggle-arrow" class="toggle-arrow">▼</span>
+  </div>
+  <div id="table-wrap" class="table-wrap">
+    <div class="table-scroll" style="margin-bottom: 0;">
+      <table>
+        <thead><tr><th>No.</th><th>元号</th><th>開始年</th><th>終了年</th><th>年数</th></tr></thead>
+        <tbody id="era-table-body"></tbody>
+      </table>
+    </div>
+    <div class="shogun-info">江戸時代（1603〜1868）… 徳川家康が征夷大将軍に任命されてから大政奉還までの約265年間。</div>
+  </div>
+</div>
+
+
+<!-- インフォメーションボタン -->
+<div class="info-footer">
+  <button type="button" class="info-button" id="infoButton" aria-label="インフォメーション" aria-haspopup="dialog" aria-controls="infoModal">i</button>
+</div>
+<!-- インフォメーションモーダル -->
+<div class="modal-overlay" id="infoModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="インフォメーション">
+  <div class="modal-content">
+    <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="閉じる">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div class="modal-body"><img src="pompomboo-tools.png" alt="Pompomboo Tools"></div>
+  </div>
+</div>
+<script>
+
+// ================= インフォメーションモーダル =================
+const infoButton = document.getElementById('infoButton');
+const infoModal = document.getElementById('infoModal');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+let infoLastFocusedElement = null;
+function openInfoModal(){
+  infoLastFocusedElement = document.activeElement;
+  infoModal.classList.add('active');
+  infoModal.setAttribute('aria-hidden','false');
+  modalCloseBtn.focus();
+}
+function closeInfoModal(){
+  infoModal.classList.remove('active');
+  infoModal.setAttribute('aria-hidden','true');
+  if(infoLastFocusedElement) infoLastFocusedElement.focus();
+}
+infoButton.addEventListener('click',openInfoModal);
+modalCloseBtn.addEventListener('click',closeInfoModal);
+infoModal.addEventListener('click',e=>{if(e.target===infoModal)closeInfoModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&infoModal.classList.contains('active'))closeInfoModal();});
+const eras = [
+  { name: '慶長', key: 'keicho', startYear: 1596, endYear: 1615, offset: 1595 },
+  { name: '元和', key: 'genna', startYear: 1615, endYear: 1624, offset: 1614 },
+  { name: '寛永', key: 'kanei', startYear: 1624, endYear: 1644, offset: 1623 },
+  { name: '正保', key: 'shoho', startYear: 1644, endYear: 1648, offset: 1643 },
+  { name: '慶安', key: 'keian', startYear: 1648, endYear: 1652, offset: 1647 },
+  { name: '承応', key: 'joo', startYear: 1652, endYear: 1655, offset: 1651 },
+  { name: '明暦', key: 'meireki', startYear: 1655, endYear: 1658, offset: 1654 },
+  { name: '万治', key: 'manji', startYear: 1658, endYear: 1661, offset: 1657 },
+  { name: '寛文', key: 'kanbun', startYear: 1661, endYear: 1673, offset: 1660 },
+  { name: '延宝', key: 'enpo', startYear: 1673, endYear: 1681, offset: 1672 },
+  { name: '天和', key: 'tenna', startYear: 1681, endYear: 1684, offset: 1680 },
+  { name: '貞享', key: 'jokyo', startYear: 1684, endYear: 1688, offset: 1683 },
+  { name: '元禄', key: 'genroku', startYear: 1688, endYear: 1704, offset: 1687 },
+  { name: '宝永', key: 'hoei', startYear: 1704, endYear: 1711, offset: 1703 },
+  { name: '正徳', key: 'shotoku', startYear: 1711, endYear: 1716, offset: 1710 },
+  { name: '享保', key: 'kyoho', startYear: 1716, endYear: 1736, offset: 1715 },
+  { name: '元文', key: 'genbun', startYear: 1736, endYear: 1741, offset: 1735 },
+  { name: '寛保', key: 'kanpo', startYear: 1741, endYear: 1744, offset: 1740 },
+  { name: '延享', key: 'enkyo', startYear: 1744, endYear: 1748, offset: 1743 },
+  { name: '寛延', key: 'kanen', startYear: 1748, endYear: 1751, offset: 1747 },
+  { name: '宝暦', key: 'horeki', startYear: 1751, endYear: 1764, offset: 1750 },
+  { name: '明和', key: 'meiwa', startYear: 1764, endYear: 1772, offset: 1763 },
+  { name: '安永', key: 'anei', startYear: 1772, endYear: 1781, offset: 1771 },
+  { name: '天明', key: 'tenmei', startYear: 1781, endYear: 1789, offset: 1780 },
+  { name: '寛政', key: 'kansei', startYear: 1789, endYear: 1801, offset: 1788 },
+  { name: '享和', key: 'kyowa', startYear: 1801, endYear: 1804, offset: 1800 },
+  { name: '文化', key: 'bunka', startYear: 1804, endYear: 1818, offset: 1803 },
+  { name: '文政', key: 'bunsei', startYear: 1818, endYear: 1830, offset: 1817 },
+  { name: '天保', key: 'tenpo', startYear: 1830, endYear: 1844, offset: 1829 },
+  { name: '弘化', key: 'koka', startYear: 1844, endYear: 1848, offset: 1843 },
+  { name: '嘉永', key: 'kaei', startYear: 1848, endYear: 1854, offset: 1847 },
+  { name: '安政', key: 'ansei', startYear: 1854, endYear: 1860, offset: 1853 },
+  { name: '万延', key: 'manen', startYear: 1860, endYear: 1861, offset: 1859 },
+  { name: '文久', key: 'bunkyu', startYear: 1861, endYear: 1864, offset: 1860 },
+  { name: '元治', key: 'genji', startYear: 1864, endYear: 1865, offset: 1863 },
+  { name: '慶応', key: 'keio', startYear: 1865, endYear: 1868, offset: 1864 }
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('gengo-select');
+  eras.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e.key;
+    opt.textContent = `${e.name}（${e.startYear}〜）`;
+    select.appendChild(opt);
+  });
+  select.value = 'genroku';
+
+  const tbody = document.getElementById('era-table-body');
+  eras.forEach((e, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i + 1}</td><td><strong>${e.name}</strong></td><td>${e.startYear}年</td><td>${e.endYear}年</td><td>${e.endYear - e.startYear + 1}年間</td>`;
+    tbody.appendChild(tr);
+  });
+
+  generateHayami(); // 初期表示時に早見表を生成
+});
+
+document.getElementById('seireki-input').addEventListener('keydown', e => { if (e.key === 'Enter') convertToGengo(); });
+document.getElementById('gengo-year-input').addEventListener('keydown', e => { if (e.key === 'Enter') convertToSeireki(); });
+
+function clearSettings() {
+  document.getElementById('seireki-input').value = '';
+  document.getElementById('result-seireki').className = 'result';
+  document.getElementById('gengo-select').value = 'genroku';
+  document.getElementById('gengo-year-input').value = '';
+  document.getElementById('result-gengo').className = 'result';
+
+  const activePanel = document.querySelector('.tab-panel.active').id;
+  if (activePanel === 'panel-seireki') {
+    document.getElementById('seireki-input').focus();
+  } else if (activePanel === 'panel-gengo') {
+    document.getElementById('gengo-year-input').focus();
+  }
+}
+
+function switchTab(id, e) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  e.target.classList.add('active');
+
+  if (id === 'panel-seireki') {
+    document.getElementById('seireki-input').focus();
+  } else if (id === 'panel-gengo') {
+    document.getElementById('gengo-year-input').focus();
+  }
+}
+
+document.querySelector('.era-table-header').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTable(); }
+});
+function toggleTable() { 
+  document.getElementById('table-wrap').classList.toggle('open'); 
+  document.getElementById('toggle-arrow').classList.toggle('open'); 
+}
+
+function formatYear(n) { return n === 1 ? '元年' : n + '年'; }
+function showResult(el, html, type) { el.innerHTML = html; el.className = 'result show ' + type; }
+
+function convertToGengo() {
+  const input = document.getElementById('seireki-input');
+  const resultDiv = document.getElementById('result-seireki');
+  const year = parseInt(input.value);
+  if (isNaN(year)) { showResult(resultDiv, '西暦を入力してください。', 'error'); return; }
+
+  const matches = eras.filter(e => year >= e.startYear && year <= e.endYear);
+  if (matches.length === 0) { showResult(resultDiv, '範囲外です。', 'error'); return; }
+
+  // 該当するすべての元号を配列にして「 / 」で結合する
+  const gengoTexts = matches.map(e => `${e.name}${formatYear(year - e.offset)}`);
+  const gengoStr = gengoTexts.join(' / ');
+
+  showResult(resultDiv, `西暦 ${year}年 は<br><span style="font-size: 1.2em;">${gengoStr}</span>`, 'success');
+}
+
+function convertToSeireki() {
+  const era = eras.find(e => e.key === document.getElementById('gengo-select').value);
+  const val = parseInt(document.getElementById('gengo-year-input').value);
+  const resultDiv = document.getElementById('result-gengo');
+  if (isNaN(val) || val < 1) { showResult(resultDiv, '正しい年を入力してください。', 'error'); return; }
+  const seireki = val + era.offset;
+  if (seireki > era.endYear) { showResult(resultDiv, `${era.name}は最大 ${formatYear(era.endYear - era.offset)} までです。`, 'error'); return; }
+  showResult(resultDiv, `${era.name}${formatYear(val)} は<br><span style="font-size: 1.2em;">西暦 ${seireki}年</span>`, 'success');
+}
+
+// ================= 早見表（更新Excelを反映） =================
+const hayamiRows = [{"even":false,"cells":[{"text":"1596年"},{"text":"慶長元年"},{"text":""}]},{"even":true,"cells":[{"text":"1597年"},{"text":"慶長2年"},{"text":""}]},{"even":false,"cells":[{"text":"1598年"},{"text":"慶長3年"},{"text":""}]},{"even":true,"cells":[{"text":"1599年"},{"text":"慶長4年"},{"text":""}]},{"even":false,"cells":[{"text":"1600年"},{"text":"慶長5年"},{"text":""}]},{"even":true,"cells":[{"text":"1601年"},{"text":"慶長6年"},{"text":""}]},{"even":false,"cells":[{"text":"1602年"},{"text":"慶長7年"},{"text":""}]},{"even":true,"cells":[{"text":"1603年"},{"text":"慶長8年"},{"text":"①家康"}]},{"even":false,"cells":[{"text":"1604年"},{"text":"慶長9年"},{"text":"①家康"}]},{"even":true,"cells":[{"text":"1605年","rowspan":2},{"text":"慶長10年","rowspan":2},{"text":"①家康"}]},{"even":true,"cells":[null,null,{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1606年"},{"text":"慶長11年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1607年"},{"text":"慶長12年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1608年"},{"text":"慶長13年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1609年"},{"text":"慶長14年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1610年"},{"text":"慶長15年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1611年"},{"text":"慶長16年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1612年"},{"text":"慶長17年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1613年"},{"text":"慶長18年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1614年"},{"text":"慶長19年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1615年","rowspan":2},{"text":"慶長20年"},{"text":"②秀忠","rowspan":2}]},{"even":true,"cells":[null,{"text":"元和元年"},null]},{"even":false,"cells":[{"text":"1616年"},{"text":"元和2年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1617年"},{"text":"元和3年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1618年"},{"text":"元和4年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1619年"},{"text":"元和5年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1620年"},{"text":"元和6年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1621年"},{"text":"元和7年"},{"text":"②秀忠"}]},{"even":false,"cells":[{"text":"1622年"},{"text":"元和8年"},{"text":"②秀忠"}]},{"even":true,"cells":[{"text":"1623年","rowspan":2},{"text":"元和9年","rowspan":2},{"text":"②秀忠"}]},{"even":true,"cells":[null,null,{"text":"③家光"}]},{"even":false,"cells":[{"text":"1624年","rowspan":2},{"text":"元和10年"},{"text":"③家光","rowspan":2}]},{"even":false,"cells":[null,{"text":"寛永元年"},null]},{"even":true,"cells":[{"text":"1625年"},{"text":"寛永2年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1626年"},{"text":"寛永3年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1627年"},{"text":"寛永4年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1628年"},{"text":"寛永5年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1629年"},{"text":"寛永6年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1630年"},{"text":"寛永7年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1631年"},{"text":"寛永8年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1632年"},{"text":"寛永9年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1633年"},{"text":"寛永10年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1634年"},{"text":"寛永11年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1635年"},{"text":"寛永12年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1636年"},{"text":"寛永13年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1637年"},{"text":"寛永14年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1638年"},{"text":"寛永15年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1639年"},{"text":"寛永16年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1640年"},{"text":"寛永17年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1641年"},{"text":"寛永18年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1642年"},{"text":"寛永19年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1643年"},{"text":"寛永20年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1644年","rowspan":2},{"text":"寛永21年"},{"text":"③家光","rowspan":2}]},{"even":false,"cells":[null,{"text":"正保元年"},null]},{"even":true,"cells":[{"text":"1645年"},{"text":"正保2年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1646年"},{"text":"正保3年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1647年"},{"text":"正保4年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1648年","rowspan":2},{"text":"正保5年"},{"text":"③家光","rowspan":2}]},{"even":false,"cells":[null,{"text":"慶安元年"},null]},{"even":true,"cells":[{"text":"1649年"},{"text":"慶安2年"},{"text":"③家光"}]},{"even":false,"cells":[{"text":"1650年"},{"text":"慶安3年"},{"text":"③家光"}]},{"even":true,"cells":[{"text":"1651年","rowspan":2},{"text":"慶安4年","rowspan":2},{"text":"③家光"}]},{"even":true,"cells":[null,null,{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1652年","rowspan":2},{"text":"慶安5年"},{"text":"④家綱","rowspan":2}]},{"even":false,"cells":[null,{"text":"承応元年"},null]},{"even":true,"cells":[{"text":"1653年"},{"text":"承応2年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1654年"},{"text":"承応3年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1655年","rowspan":2},{"text":"承応4年"},{"text":"④家綱","rowspan":2}]},{"even":true,"cells":[null,{"text":"明暦元年"},null]},{"even":false,"cells":[{"text":"1656年"},{"text":"明暦2年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1657年"},{"text":"明暦3年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1658年","rowspan":2},{"text":"明暦4年"},{"text":"④家綱","rowspan":2}]},{"even":false,"cells":[null,{"text":"万治元年"},null]},{"even":true,"cells":[{"text":"1659年"},{"text":"万治2年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1660年"},{"text":"万治3年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1661年","rowspan":2},{"text":"万治4年"},{"text":"④家綱","rowspan":2}]},{"even":true,"cells":[null,{"text":"寛文元年"},null]},{"even":false,"cells":[{"text":"1662年"},{"text":"寛文2年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1663年"},{"text":"寛文3年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1664年"},{"text":"寛文4年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1665年"},{"text":"寛文5年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1666年"},{"text":"寛文6年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1667年"},{"text":"寛文7年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1668年"},{"text":"寛文8年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1669年"},{"text":"寛文9年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1670年"},{"text":"寛文10年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1671年"},{"text":"寛文11年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1672年"},{"text":"寛文12年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1673年","rowspan":2},{"text":"寛文13年"},{"text":"④家綱","rowspan":2}]},{"even":true,"cells":[null,{"text":"延宝元年"},null]},{"even":false,"cells":[{"text":"1674年"},{"text":"延宝2年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1675年"},{"text":"延宝3年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1676年"},{"text":"延宝4年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1677年"},{"text":"延宝5年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1678年"},{"text":"延宝6年"},{"text":"④家綱"}]},{"even":true,"cells":[{"text":"1679年"},{"text":"延宝7年"},{"text":"④家綱"}]},{"even":false,"cells":[{"text":"1680年","rowspan":2},{"text":"延宝8年","rowspan":2},{"text":"④家綱"}]},{"even":false,"cells":[null,null,{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1681年","rowspan":2},{"text":"延宝9年"},{"text":"⑤綱吉","rowspan":2}]},{"even":true,"cells":[null,{"text":"天和元年"},null]},{"even":false,"cells":[{"text":"1682年"},{"text":"天和2年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1683年"},{"text":"天和3年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1684年","rowspan":2},{"text":"天和4年"},{"text":"⑤綱吉","rowspan":2}]},{"even":false,"cells":[null,{"text":"貞享元年"},null]},{"even":true,"cells":[{"text":"1685年"},{"text":"貞享2年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1686年"},{"text":"貞享3年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1687年"},{"text":"貞享4年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1688年","rowspan":2},{"text":"貞享5年"},{"text":"⑤綱吉","rowspan":2}]},{"even":false,"cells":[null,{"text":"元禄元年"},null]},{"even":true,"cells":[{"text":"1689年"},{"text":"元禄2年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1690年"},{"text":"元禄3年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1691年"},{"text":"元禄4年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1692年"},{"text":"元禄5年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1693年"},{"text":"元禄6年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1694年"},{"text":"元禄7年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1695年"},{"text":"元禄8年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1696年"},{"text":"元禄9年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1697年"},{"text":"元禄10年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1698年"},{"text":"元禄11年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1699年"},{"text":"元禄12年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1700年"},{"text":"元禄13年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1701年"},{"text":"元禄14年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1702年"},{"text":"元禄15年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1703年"},{"text":"元禄16年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1704年","rowspan":2},{"text":"元禄17年"},{"text":"⑤綱吉","rowspan":2}]},{"even":false,"cells":[null,{"text":"宝永元年"},null]},{"even":true,"cells":[{"text":"1705年"},{"text":"宝永2年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1706年"},{"text":"宝永3年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1707年"},{"text":"宝永4年"},{"text":"⑤綱吉"}]},{"even":false,"cells":[{"text":"1708年"},{"text":"宝永5年"},{"text":"⑤綱吉"}]},{"even":true,"cells":[{"text":"1709年","rowspan":2},{"text":"宝永6年","rowspan":2},{"text":"⑤綱吉"}]},{"even":true,"cells":[null,null,{"text":"⑥家宣"}]},{"even":false,"cells":[{"text":"1710年"},{"text":"宝永7年"},{"text":"⑥家宣"}]},{"even":true,"cells":[{"text":"1711年","rowspan":2},{"text":"宝永8年"},{"text":"⑥家宣","rowspan":2}]},{"even":true,"cells":[null,{"text":"正徳元年"},null]},{"even":false,"cells":[{"text":"1712年"},{"text":"正徳2年"},{"text":"⑥家宣"}]},{"even":true,"cells":[{"text":"1713年"},{"text":"正徳3年"},{"text":"⑦家継"}]},{"even":false,"cells":[{"text":"1714年"},{"text":"正徳4年"},{"text":"⑦家継"}]},{"even":true,"cells":[{"text":"1715年"},{"text":"正徳5年"},{"text":"⑦家継"}]},{"even":false,"cells":[{"text":"1716年","rowspan":3},{"text":"正徳6年"},{"text":"⑦家継","rowspan":2}]},{"even":false,"cells":[null,{"text":"享保元年","rowspan":2},null]},{"even":false,"cells":[null,null,{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1717年"},{"text":"享保2年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1718年"},{"text":"享保3年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1719年"},{"text":"享保4年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1720年"},{"text":"享保5年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1721年"},{"text":"享保6年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1722年"},{"text":"享保7年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1723年"},{"text":"享保8年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1724年"},{"text":"享保9年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1725年"},{"text":"享保10年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1726年"},{"text":"享保11年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1727年"},{"text":"享保12年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1728年"},{"text":"享保13年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1729年"},{"text":"享保14年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1730年"},{"text":"享保15年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1731年"},{"text":"享保16年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1732年"},{"text":"享保17年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1733年"},{"text":"享保18年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1734年"},{"text":"享保19年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1735年"},{"text":"享保20年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1736年","rowspan":2},{"text":"享保21年"},{"text":"⑧吉宗","rowspan":2}]},{"even":false,"cells":[null,{"text":"元文元年"},null]},{"even":true,"cells":[{"text":"1737年"},{"text":"元文2年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1738年"},{"text":"元文3年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1739年"},{"text":"元文4年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1740年"},{"text":"元文5年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1741年","rowspan":2},{"text":"元文6年"},{"text":"⑧吉宗","rowspan":2}]},{"even":true,"cells":[null,{"text":"寛保元年"},null]},{"even":false,"cells":[{"text":"1742年"},{"text":"寛保2年"},{"text":"⑧吉宗"}]},{"even":true,"cells":[{"text":"1743年"},{"text":"寛保3年"},{"text":"⑧吉宗"}]},{"even":false,"cells":[{"text":"1744年","rowspan":2},{"text":"寛保4年"},{"text":"⑧吉宗","rowspan":2}]},{"even":false,"cells":[null,{"text":"延享元年"},null]},{"even":true,"cells":[{"text":"1745年","rowspan":2},{"text":"延享2年","rowspan":2},{"text":"⑧吉宗"}]},{"even":true,"cells":[null,null,{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1746年"},{"text":"延享3年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1747年"},{"text":"延享4年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1748年","rowspan":2},{"text":"延享5年"},{"text":"⑨家重","rowspan":2}]},{"even":false,"cells":[null,{"text":"寛延元年"},null]},{"even":true,"cells":[{"text":"1749年"},{"text":"寛延2年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1750年"},{"text":"寛延3年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1751年","rowspan":2},{"text":"寛延4年"},{"text":"⑨家重","rowspan":2}]},{"even":true,"cells":[null,{"text":"宝暦元年"},null]},{"even":false,"cells":[{"text":"1752年"},{"text":"宝暦2年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1753年"},{"text":"宝暦3年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1754年"},{"text":"宝暦4年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1755年"},{"text":"宝暦5年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1756年"},{"text":"宝暦6年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1757年"},{"text":"宝暦7年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1758年"},{"text":"宝暦8年"},{"text":"⑨家重"}]},{"even":true,"cells":[{"text":"1759年"},{"text":"宝暦9年"},{"text":"⑨家重"}]},{"even":false,"cells":[{"text":"1760年","rowspan":2},{"text":"宝暦10年","rowspan":2},{"text":"⑨家重"}]},{"even":false,"cells":[null,null,{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1761年"},{"text":"宝暦11年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1762年"},{"text":"宝暦12年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1763年"},{"text":"宝暦13年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1764年","rowspan":2},{"text":"宝暦14年"},{"text":"⑩家治","rowspan":2}]},{"even":false,"cells":[null,{"text":"明和元年"},null]},{"even":true,"cells":[{"text":"1765年"},{"text":"明和2年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1766年"},{"text":"明和3年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1767年"},{"text":"明和4年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1768年"},{"text":"明和5年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1769年"},{"text":"明和6年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1770年"},{"text":"明和7年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1771年"},{"text":"明和8年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1772年","rowspan":2},{"text":"明和9年"},{"text":"⑩家治","rowspan":2}]},{"even":false,"cells":[null,{"text":"安永元年"},null]},{"even":true,"cells":[{"text":"1773年"},{"text":"安永2年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1774年"},{"text":"安永3年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1775年"},{"text":"安永4年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1776年"},{"text":"安永5年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1777年"},{"text":"安永6年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1778年"},{"text":"安永7年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1779年"},{"text":"安永8年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1780年"},{"text":"安永9年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1781年","rowspan":2},{"text":"安永10年"},{"text":"⑩家治","rowspan":2}]},{"even":true,"cells":[null,{"text":"天明元年"},null]},{"even":false,"cells":[{"text":"1782年"},{"text":"天明2年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1783年"},{"text":"天明3年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1784年"},{"text":"天明4年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1785年"},{"text":"天明5年"},{"text":"⑩家治"}]},{"even":false,"cells":[{"text":"1786年"},{"text":"天明6年"},{"text":"⑩家治"}]},{"even":true,"cells":[{"text":"1787年"},{"text":"天明7年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1788年"},{"text":"天明8年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1789年","rowspan":2},{"text":"天明9年"},{"text":"⑪家斉","rowspan":2}]},{"even":true,"cells":[null,{"text":"寛政元年"},null]},{"even":false,"cells":[{"text":"1790年"},{"text":"寛政2年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1791年"},{"text":"寛政3年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1792年"},{"text":"寛政4年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1793年"},{"text":"寛政5年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1794年"},{"text":"寛政6年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1795年"},{"text":"寛政7年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1796年"},{"text":"寛政8年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1797年"},{"text":"寛政9年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1798年"},{"text":"寛政10年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1799年"},{"text":"寛政11年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1800年"},{"text":"寛政12年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1801年","rowspan":2},{"text":"寛政13年"},{"text":"⑪家斉","rowspan":2}]},{"even":true,"cells":[null,{"text":"享和元年"},null]},{"even":false,"cells":[{"text":"1802年"},{"text":"享和2年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1803年"},{"text":"享和3年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1804年","rowspan":2},{"text":"享和4年"},{"text":"⑪家斉","rowspan":2}]},{"even":false,"cells":[null,{"text":"文化元年"},null]},{"even":true,"cells":[{"text":"1805年"},{"text":"文化2年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1806年"},{"text":"文化3年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1807年"},{"text":"文化4年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1808年"},{"text":"文化5年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1809年"},{"text":"文化6年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1810年"},{"text":"文化7年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1811年"},{"text":"文化8年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1812年"},{"text":"文化9年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1813年"},{"text":"文化10年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1814年"},{"text":"文化11年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1815年"},{"text":"文化12年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1816年"},{"text":"文化13年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1817年"},{"text":"文化14年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1818年","rowspan":2},{"text":"文化15年"},{"text":"⑪家斉","rowspan":2}]},{"even":false,"cells":[null,{"text":"文政元年"},null]},{"even":true,"cells":[{"text":"1819年"},{"text":"文政2年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1820年"},{"text":"文政3年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1821年"},{"text":"文政4年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1822年"},{"text":"文政5年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1823年"},{"text":"文政6年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1824年"},{"text":"文政7年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1825年"},{"text":"文政8年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1826年"},{"text":"文政9年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1827年"},{"text":"文政10年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1828年"},{"text":"文政11年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1829年"},{"text":"文政12年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1830年","rowspan":2},{"text":"文政13年"},{"text":"⑪家斉","rowspan":2}]},{"even":false,"cells":[null,{"text":"天保元年"},null]},{"even":true,"cells":[{"text":"1831年"},{"text":"天保2年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1832年"},{"text":"天保3年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1833年"},{"text":"天保4年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1834年"},{"text":"天保5年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1835年"},{"text":"天保6年"},{"text":"⑪家斉"}]},{"even":false,"cells":[{"text":"1836年"},{"text":"天保7年"},{"text":"⑪家斉"}]},{"even":true,"cells":[{"text":"1837年","rowspan":2},{"text":"天保8年","rowspan":2},{"text":"⑪家斉"}]},{"even":true,"cells":[null,null,{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1838年"},{"text":"天保9年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1839年"},{"text":"天保10年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1840年"},{"text":"天保11年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1841年"},{"text":"天保12年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1842年"},{"text":"天保13年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1843年"},{"text":"天保14年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1844年","rowspan":2},{"text":"天保15年"},{"text":"⑫家慶","rowspan":2}]},{"even":false,"cells":[null,{"text":"弘化元年"},null]},{"even":true,"cells":[{"text":"1845年"},{"text":"弘化2年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1846年"},{"text":"弘化3年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1847年"},{"text":"弘化4年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1848年","rowspan":2},{"text":"弘化5年"},{"text":"⑫家慶","rowspan":2}]},{"even":false,"cells":[null,{"text":"嘉永元年"},null]},{"even":true,"cells":[{"text":"1849年"},{"text":"嘉永2年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1850年"},{"text":"嘉永3年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1851年"},{"text":"嘉永4年"},{"text":"⑫家慶"}]},{"even":false,"cells":[{"text":"1852年"},{"text":"嘉永5年"},{"text":"⑫家慶"}]},{"even":true,"cells":[{"text":"1853年","rowspan":2},{"text":"嘉永6年","rowspan":2},{"text":"⑫家慶"}]},{"even":true,"cells":[null,null,{"text":"⑬家定"}]},{"even":false,"cells":[{"text":"1854年","rowspan":2},{"text":"嘉永7年"},{"text":"⑬家定","rowspan":2}]},{"even":false,"cells":[null,{"text":"安政元年"},null]},{"even":true,"cells":[{"text":"1855年"},{"text":"安政2年"},{"text":"⑬家定"}]},{"even":false,"cells":[{"text":"1856年"},{"text":"安政3年"},{"text":"⑬家定"}]},{"even":true,"cells":[{"text":"1857年"},{"text":"安政4年"},{"text":"⑬家定"}]},{"even":false,"cells":[{"text":"1858年","rowspan":2},{"text":"安政5年","rowspan":2},{"text":"⑬家定"}]},{"even":false,"cells":[null,null,{"text":"⑭家茂"}]},{"even":true,"cells":[{"text":"1859年"},{"text":"安政6年"},{"text":"⑭家茂"}]},{"even":false,"cells":[{"text":"1860年","rowspan":2},{"text":"安政7年"},{"text":"⑭家茂"}]},{"even":false,"cells":[null,{"text":"万延元年"},{"text":"⑭家茂"}]},{"even":true,"cells":[{"text":"1861年","rowspan":2},{"text":"万延2年"},{"text":"⑭家茂","rowspan":2}]},{"even":true,"cells":[null,{"text":"文久元年"},null]},{"even":false,"cells":[{"text":"1862年"},{"text":"文久2年"},{"text":"⑭家茂"}]},{"even":true,"cells":[{"text":"1863年"},{"text":"文久3年"},{"text":"⑭家茂"}]},{"even":false,"cells":[{"text":"1864年","rowspan":2},{"text":"文久4年"},{"text":"⑭家茂","rowspan":2}]},{"even":false,"cells":[null,{"text":"元治元年"},null]},{"even":true,"cells":[{"text":"1865年","rowspan":2},{"text":"元治2年"},{"text":"⑭家茂","rowspan":2}]},{"even":true,"cells":[null,{"text":"慶応元年"},null]},{"even":false,"cells":[{"text":"1866年"},{"text":"慶応2年"},{"text":"⑭家茂"}]},{"even":true,"cells":[{"text":"1867年","rowspan":2},{"text":"慶応2年"},{"text":"⑮慶喜","rowspan":2}]},{"even":true,"cells":[null,{"text":"慶応3年"},null]},{"even":false,"cells":[{"text":"1868年","rowspan":3},{"text":"慶応3年"},{"text":"⑮慶喜"}]},{"even":false,"cells":[null,{"text":"慶応4年"},{"text":"","rowspan":2}]},{"even":false,"cells":[null,{"text":"明治元年"},null]}];
+
+function generateHayami() {
+  const tbody = document.querySelector('#hayami-table tbody');
+  let html = '';
+
+  for (let i = 0; i < hayamiRows.length; i++) {
+    const row = hayamiRows[i];
+    const bgClass = row.even ? 'bg-even' : '';
+    const is1716 = row.cells.some(cell => cell && cell.text === '1716年');
+
+    if (is1716) {
+      html += `<tr class="${bgClass} special-1716">`;
+      html += '<td><div class="special-full">1716年</div></td>';
+      html += '<td><div class="special-era"><div>正徳6年</div><div>享保元年</div></div></td>';
+      html += '<td><div class="special-shogun"><div>⑦家継</div><div>⑧吉宗</div></div></td>';
+      html += '</tr>';
+      i += 2;
+      continue;
+    }
+
+    html += `<tr class="${bgClass}">`;
+    row.cells.forEach(cell => {
+      if (cell === null) return;
+      const rowspan = cell.rowspan ? ` rowspan="${cell.rowspan}"` : '';
+      html += `<td${rowspan}>${cell.text}</td>`;
+    });
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+</script>
+</body>
+</html>
